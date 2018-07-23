@@ -3,19 +3,27 @@
 // helper class for parsing PROPFIND response bodies
 class HTTP_WebDAV_Client_parse_propfind_response
 {
+    private $_tmpdata;
+    private $_tmpprop;
+    private $_tmpstat;
+    private $_tmphref;
+    private $_depth;
+    public $urls;
+    public $success;
+
     // get requested properties as array containing name/namespace pairs
-    function HTTP_WebDAV_Client_parse_propfind_response($response)
+    function __construct($response)
     {
         $this->urls = array();
-
+        $this->_tmpdata = null;
+        $this->_tmpprop = null;
         $this->_depth = 0;
 
         $xml_parser = xml_parser_create_ns("UTF-8", " ");
         xml_set_element_handler($xml_parser,
                                 array(&$this, "_startElement"),
                                 array(&$this, "_endElement"));
-        xml_set_character_data_handler($xml_parser,
-                                       array(&$this, "_data"));
+        xml_set_character_data_handler($xml_parser, array($this, "_data"));
         xml_parser_set_option($xml_parser, XML_OPTION_CASE_FOLDING,
                               false);
         $this->success = xml_parse($xml_parser, $response, true);
@@ -25,7 +33,7 @@ class HTTP_WebDAV_Client_parse_propfind_response
     }
 
 
-    function _startElement($parser, $name, $attrs)
+    private function _startElement($parser, $name, $attrs)
     {
         if (strstr($name, " ")) {
             list($ns, $tag) = explode(" ", $name);
@@ -49,7 +57,7 @@ class HTTP_WebDAV_Client_parse_propfind_response
         $this->_depth++;
     }
 
-    function _endElement($parser, $name)
+    private function _endElement($parser, $name)
     {
         if (strstr($name, " ")) {
             list($ns, $tag) = explode(" ", $name);
@@ -98,6 +106,9 @@ class HTTP_WebDAV_Client_parse_propfind_response
                 $this->_tmpprop['mtime'] = strtotime($this->_tmpdata);
                 break;
             case 'creationdate':
+                if(!isset($this->_tmpdata)) {
+                    continue;
+                }
                 $t = preg_split("/[^[:digit:]]/", $this->_tmpdata);
                 $this->_tmpprop['ctime'] = mktime($t[3], $t[4], $t[5], $t[1], $t[2], $t[0]);
                 unset($t);
@@ -118,12 +129,12 @@ class HTTP_WebDAV_Client_parse_propfind_response
         unset($this->_tmpdata);
     }
 
-    function _data($parser, $data)
+    public function _data($parser, $data)
     {
         $this->_tmpdata = $data;
     }
 
-    function stat($href = false)
+    public function stat($href = false)
     {
         if ($href) {
             // TODO
@@ -132,6 +143,7 @@ class HTTP_WebDAV_Client_parse_propfind_response
             return current($this->urls);
         }
     }
+
 }
 
 
