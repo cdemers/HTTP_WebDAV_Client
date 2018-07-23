@@ -1,7 +1,9 @@
 {
     "name": "pear/http_webdav_client",
-    "description": "Repackaging of the abandoned pear HTTP_WebDAV_Client library.",
+    "description": "Portage of the abandoned pear HTTP_WebDAV_Client library.",
     "type": "library",
+    "keywords"    : [ "webdav", "pear" ],
+    "homepage" : "http://pear.php.net/package/HTTP_WebDAV_Client",
     "license": "PHP",
     "authors": [
         {
@@ -21,6 +23,4 @@
     "include-path": [
         "./"
     ]
-
-
 }
