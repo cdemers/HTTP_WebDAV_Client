@@ -760,6 +760,10 @@ class HTTP_WebDAV_Client_Stream
      */
     private function _parse_url($path)
     {
+        if(filter_var($path, FILTER_VALIDATE_URL) === false) {
+            error_log("Format validation of the WebDAV URL failed:'$path'\n");
+            return false;
+        };
         // rewrite the WebDAV url as a plain HTTP url
         $url = parse_url($path);
 
