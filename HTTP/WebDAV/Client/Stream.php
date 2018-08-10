@@ -317,6 +317,7 @@ class HTTP_WebDAV_Client_Stream
         $end   = $this->position + strlen($buffer) - 1;
 
         // create a partial PUT request
+        /* @var $req HTTP_Request2 */
         $req = &$this->_startRequest(HTTP_Request2::METHOD_PUT);
         if (is_string($this->user)) {
             $req->setAuth($this->user, @$this->pass);          
@@ -327,6 +328,7 @@ class HTTP_WebDAV_Client_Stream
         }
         $req->setBody($buffer);
 
+        
         // go! go! go!
         $resp = $req->send();
 

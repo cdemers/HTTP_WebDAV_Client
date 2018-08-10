@@ -106,6 +106,7 @@ class HTTP_WebDAV_Client_parse_propfind_response
                 $this->_tmpprop['mtime'] = strtotime($this->_tmpdata);
                 break;
             case 'creationdate':
+                /* Not sure about that: */
                 if(!isset($this->_tmpdata)) {
                     continue;
                 }
@@ -114,6 +115,10 @@ class HTTP_WebDAV_Client_parse_propfind_response
                 unset($t);
                 break;
             case 'getcontentlength':
+                /* Not sure about that: */
+                if(!isset($this->_tmpdata)) {
+                    continue;
+                }
                 $this->_tmpprop['size'] = $this->_tmpdata;
                 break;
             }
@@ -131,6 +136,7 @@ class HTTP_WebDAV_Client_parse_propfind_response
 
     public function _data($parser, $data)
     {
+        print("[DEBUG] _parse_propfind_response(): depth='{$this->_depth}', data='$data'\n");
         $this->_tmpdata = $data;
     }
 
